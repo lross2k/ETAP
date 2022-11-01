@@ -5,7 +5,7 @@ import numpy as np
 
 # Obtiene datos en JSON mediante GET y retorna diccionario con datos ordenados por fecha
 def ObtenerDemandaDiaria(inicio, fin, verbose=0):
-    print("Waiting for API response...")
+    print("Esperando servidor de CENCE...")
     # Enviar solicitud por metodo GET
     response = requests.get('https://apps.grupoice.com/CenceWeb/data/sen/json/DemandaMW', params={'inicio': inicio, 'fin': fin})
     # Si el metodo GET es recibido correctament
@@ -28,11 +28,11 @@ def ObtenerDemandaDiaria(inicio, fin, verbose=0):
         return data
     # Si la URL no retorna una solicitud exitosa
     else:
-        print("HTTP error: ",response.status_code)
+        print("Error de HTTP: ",response.status_code)
         exit()
 
 def build_df(dic):
-    print("sorting data...")
+    print("Organizando datos...")
     frame = {'Fecha':[],'Hora':[],'Potencia':[]}
     for key in dic.keys():
         timestamp = pd.Timestamp(key)
@@ -44,6 +44,7 @@ def build_df(dic):
     return pd.DataFrame(frame)
 
 def main():
+    print("Formato AÑO MES DÍA\nej 20191226")
     inicio  = input("inicio  $ ") #20190101
     fin     = input("final   $ ") #20190102
     nombre  = input("archivo $ ")
