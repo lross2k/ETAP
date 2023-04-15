@@ -34,8 +34,8 @@ class ETAP_Lump():
             string = string + '\n'
         return(string)
     
-    def set_values(self, P, Q, PF, V, Angle, Humidity, Temp,
-                    Wind, Irradiance, Hour, Min, Sec, Date):
+    def set_values(self, P, Q, PF, Hour, Min, Sec, Date, V=None, Angle=None, 
+                   Humidity=None, Temp=None, Wind=None, Irradiance=None):
         data = [P, Q, PF, V, Angle, Humidity, Temp, Wind, 
                 Irradiance, Hour, Min, Sec, Date]
         tmp_row = []
