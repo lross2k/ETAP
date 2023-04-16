@@ -77,6 +77,7 @@ class Lump():
             if self._wb != None and  self._last_cache_openpyxl > self._last_modified:
                 self._wb.save(filename)
             else:
+                time.sleep(.1)
                 self._write_openpyxl_wb()
                 try:
                     self.save(filename)
@@ -86,6 +87,7 @@ class Lump():
             if self._xlwt_wb != None and self._last_cache_xlwt > self._last_modified:
                 self._xlwt_wb.save(filename)
             else:
+                time.sleep(.1)
                 self._write_xlwt_wb()
                 try:
                     self.save(filename, writer='xlwt')
@@ -126,7 +128,7 @@ class Lump():
         self._gen_header_row() 
         factor = (self._timestep[0]*60 + self._timestep[1]) / (time_step[0]*60 + time_step[1])
         tmp_row = []
-        if type(factor) == float and factor < 0.0:
+        if type(factor) == float and factor < 1.0:
             step = int(1/factor)
             for i in range(1, len(_rows_copy), step):
                 for j in range(0, 13):
@@ -235,7 +237,7 @@ def _timeshift_generic(filename, folder='.', hour=0, minutes=0, date_str="%Y-%d-
         filename = filename.replace('xlsx','xls')
     _lump_.save(folder+'/'+filename, writer='xlwt')
 
-def timeshift_to_hourly(filename, date_str="%Y-%d-%m %H:%M:%S"):
+def timeshift_to_60_minutes(filename, date_str="%Y-%d-%m %H:%M:%S"):
     _timeshift_generic(filename, folder='60_MIN', hour=1, date_str=date_str)
 
 def timeshift_to_15_minutes(filename, date_str="%Y-%d-%m %H:%M:%S"):
@@ -243,3 +245,14 @@ def timeshift_to_15_minutes(filename, date_str="%Y-%d-%m %H:%M:%S"):
 
 def timeshift_to_30_minutes(filename, date_str="%Y-%d-%m %H:%M:%S"):
     _timeshift_generic(filename, minutes=30, folder='30_MIN', date_str=date_str)
+
+def _glob_timeshift_generic(func, date_str="%Y-%d-%m %H:%M:%S"):
+    files = []
+    for file in os.listdir():
+        if re.search('[.]xl.+$', file):
+            files.append(file)
+    for file in files:
+        func(file, date_str=date_str)
+
+def glob_timeshift_to_60_minutes(date_str="%Y-%d-%m %H:%M:%S"):
+    _glob_timeshift_generic(timeshift_to_60_minutes, date_str=date_str)

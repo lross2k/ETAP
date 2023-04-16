@@ -5,7 +5,9 @@ Roadmap
     -[x] to 60 min
     -[x] to 15 min
     -[x] to 30 min
-    -[ ] glob to 60 min
+    -[x] glob to 60 min
+    -[ ] glob to 30 min
+    -[ ] glob to 15 min
 -[ ] Try to automatically determine date format
 -[ ] Setup automatic tests
 
