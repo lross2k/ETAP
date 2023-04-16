@@ -3,9 +3,10 @@ ETAP tool TODO list
 Roadmap
 -[ ] Create some standard abstraction utilities
     -[x] to 60 min
+    -[x] to 15 min
+    -[x] to 30 min
     -[ ] glob to 60 min
-    -[ ] glob 60 min to 15 min
-    -[ ] glob 60 min to 30 min
+-[ ] Try to automatically determine date format
 -[ ] Setup automatic tests
 
 Done

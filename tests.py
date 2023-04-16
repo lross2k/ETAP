@@ -27,5 +27,13 @@ from ETAP import *
 #lump_t04.change_time_step([1,0,0])
 #lump_t04.save('test_04.xlsx')
 
-timeshift_to_hourly('PVA4.xlsx', date_str='%d/%m/%Y')
-timeshift_to_hourly('103009.xlsx')
+#timeshift_to_hourly('PVA4.xlsx', date_str='%d/%m/%Y')
+#timeshift_to_hourly('103009.xlsx')
+
+#timeshift_to_15_minutes('Gen5.xls', date_str='%d/%m/%Y')
+#timeshift_to_15_minutes('PVA12.xls', date_str='%d/%m/%Y')
+#timeshift_to_15_minutes('WTG6.xls', date_str='%d/%m/%Y')
+
+#timeshift_to_30_minutes('Gen5.xls', date_str='%d/%m/%Y')
+#timeshift_to_30_minutes('PVA12.xls', date_str='%d/%m/%Y')
+#timeshift_to_30_minutes('WTG6.xls', date_str='%d/%m/%Y')

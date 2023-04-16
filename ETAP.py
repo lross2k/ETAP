@@ -126,7 +126,7 @@ class Lump():
         self._gen_header_row() 
         factor = (self._timestep[0]*60 + self._timestep[1]) / (time_step[0]*60 + time_step[1])
         tmp_row = []
-        if type(factor) == float:
+        if type(factor) == float and factor < 0.0:
             step = int(1/factor)
             for i in range(1, len(_rows_copy), step):
                 for j in range(0, 13):
@@ -134,6 +134,7 @@ class Lump():
                 self._rows.append(tmp_row[::])
                 tmp_row = []
         else:
+            factor = int(factor)
             for i in range(1, len(_rows_copy)):
                 for k in range(0,factor):
                     for j in range(0, 13):
@@ -191,13 +192,19 @@ def load_lump(filename, reader='openpyxl', date_str=None):
             Date.append(      _ws.cell_value(rowx=row, colx=12))
         _lump.set_values(P,Q,PF,Hour,Min,Sec,Date,V,Angle,Humidity,
                          Temp,Wind,Irradiance,date_str=date_str)
+    else:
+        print('Unsupported reader, aborting')    
+        return
     return(_lump)
 
 ''' Higher level function, allows to change the timestep of a file while also managing
 automatically most of the file format and folder structure dependent parameters '''
-def timeshift_to_hourly(filename, date_str="%Y-%d-%m %H:%M:%S"):
+def _timeshift_generic(filename, folder='.', hour=0, minutes=0, date_str="%Y-%d-%m %H:%M:%S"):
+    if hour != 0 and minutes != 0:
+        print('Unsuported timestep operation, aborting')
+        return
     if re.search('.xls$', filename):
-        reader = 'xlrb'
+        reader = 'xlrd'
     elif re.search('.xlsx$', filename):
         reader = 'openpyxl'
     else:
@@ -206,16 +213,33 @@ def timeshift_to_hourly(filename, date_str="%Y-%d-%m %H:%M:%S"):
     try:
         _lump_ = load_lump(filename, reader=reader, date_str=date_str)
     except ValueError:
-        print('File:',filename,'uses a different date format, specify it with date_str=, aborting')
+        print('File:',filename,'uses a different date format, specify it with date_str parameter, aborting')
         return
-    if _lump_._timestep[0] != 0: 
-        print('File:',filename,'already had hourly time step, aborting')
-        return
-    _lump_.change_time_step([1,0,0])
+    if hour != 0:
+        if _lump_._timestep[0] == hour: 
+            print('File:',filename,'already had given hour time step, aborting')
+            return
+        else:
+            _lump_.change_time_step([hour,0,0])
+    elif minutes != 0:
+        if _lump_._timestep[1] == minutes: 
+            print('File:',filename,'already had given minutes time step, aborting')
+            return
+        else:
+            _lump_.change_time_step([0,minutes,0])
     try:
-        os.mkdir('60_MIN')
+        os.mkdir(folder)
     except FileExistsError:
         pass
     if reader == 'openpyxl':
         filename = filename.replace('xlsx','xls')
-    _lump_.save('60_MIN/'+filename, writer='xlwt')
+    _lump_.save(folder+'/'+filename, writer='xlwt')
+
+def timeshift_to_hourly(filename, date_str="%Y-%d-%m %H:%M:%S"):
+    _timeshift_generic(filename, folder='60_MIN', hour=1, date_str=date_str)
+
+def timeshift_to_15_minutes(filename, date_str="%Y-%d-%m %H:%M:%S"):
+    _timeshift_generic(filename, minutes=15, folder='15_MIN', date_str=date_str)
+
+def timeshift_to_30_minutes(filename, date_str="%Y-%d-%m %H:%M:%S"):
+    _timeshift_generic(filename, minutes=30, folder='30_MIN', date_str=date_str)
