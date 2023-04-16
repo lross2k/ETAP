@@ -2,10 +2,10 @@ ETAP tool TODO list
 
 Roadmap
 -[ ] Create some standard abstraction utilities
+    -[x] to 60 min
+    -[ ] glob to 60 min
     -[ ] glob 60 min to 15 min
     -[ ] glob 60 min to 30 min
-    -[ ] glob 15 min to 60 min
-    -[ ] glob 30 min to 60 min
 -[ ] Setup automatic tests
 
 Done

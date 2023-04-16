@@ -2,9 +2,11 @@ import openpyxl   # For Excel files (.xlsx)
 import xlwt, xlrd # For old Excel files (.xls)
 from datetime import datetime
 import time
+import re
+import os
 
 # Class with methods and fields related to generating and manipulating ETAP Lumped files
-class ETAP_Lump():
+class Lump():
     # Empty initialization
     def __init__(self):
         self._last_modified = time.localtime()
@@ -146,7 +148,7 @@ class ETAP_Lump():
 
 # Load lump data from an Excel file using openpyxl for xlsx files and xlrd for xls files
 def load_lump(filename, reader='openpyxl', date_str=None):
-    _lump = ETAP_Lump()
+    _lump = Lump()
     if reader == 'openpyxl':
         _lump._wb = openpyxl.load_workbook(filename)
         _ws = _lump._wb.active
@@ -190,3 +192,30 @@ def load_lump(filename, reader='openpyxl', date_str=None):
         _lump.set_values(P,Q,PF,Hour,Min,Sec,Date,V,Angle,Humidity,
                          Temp,Wind,Irradiance,date_str=date_str)
     return(_lump)
+
+''' Higher level function, allows to change the timestep of a file while also managing
+automatically most of the file format and folder structure dependent parameters '''
+def timeshift_to_hourly(filename, date_str="%Y-%d-%m %H:%M:%S"):
+    if re.search('.xls$', filename):
+        reader = 'xlrb'
+    elif re.search('.xlsx$', filename):
+        reader = 'openpyxl'
+    else:
+        print('File:',filename,'should have .xls or .xlsx extension, aborting')
+        return
+    try:
+        _lump_ = load_lump(filename, reader=reader, date_str=date_str)
+    except ValueError:
+        print('File:',filename,'uses a different date format, specify it with date_str=, aborting')
+        return
+    if _lump_._timestep[0] != 0: 
+        print('File:',filename,'already had hourly time step, aborting')
+        return
+    _lump_.change_time_step([1,0,0])
+    try:
+        os.mkdir('60_MIN')
+    except FileExistsError:
+        pass
+    if reader == 'openpyxl':
+        filename = filename.replace('xlsx','xls')
+    _lump_.save('60_MIN/'+filename, writer='xlwt')
