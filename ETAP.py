@@ -1,20 +1,22 @@
 import openpyxl
 import xlwt
+import xlrd
 
 class ETAP_Lump():
     # Empty initialization
     def __init__(self):
         self._wb = None
         self._xlwt_wb = None
+        self._xlrd_wb = None
         self._timestep = [0, 15, 0] # HH:MM:SS
         self._rows = [] # row column syntax
         self._gen_header_row()
     
     # Calculate time step used in the current object
-    def _calc_step(self):
-        self._timestep = [self._rows[1][10] - self._rows[2][10],
-                         self._rows[1][11] - self._rows[2][11],
-                         self._rows[1][12] - self._rows[2][12]]
+    def _calc_step(self, offset=0):
+        self._timestep = [self._rows[1][10+offset] - self._rows[2][10+offset],
+                     self._rows[1][11+offset] - self._rows[2][11+offset],
+                     self._rows[1][12+offset] - self._rows[2][12+offset]]
     
     # Generate the HEADER of Lump file
     def _gen_header_row(self):
@@ -55,19 +57,26 @@ class ETAP_Lump():
     # Save the current data in an Excel file, either xlsx or xls
     def save(self, filename, writer='openpyxl'):
         if writer == 'openpyxl':
-            self._wb.save(filename)
+            if self._wb != None:
+                self._wb.save(filename)
+            else:
+                self._write_openpyxl_wb()
+                try:
+                    self.save(filename)
+                except PermissionError:
+                    print("Couldn't write to file, close it before running the program")
         elif writer == 'xlwt':
             if self._xlwt_wb != None:
                 self._xlwt_wb.save(filename)
             else:
-                self.write_xlwt_wb()
+                self._write_xlwt_wb()
                 try:
                     self.save(filename, writer='xlwt')
                 except PermissionError:
                     print("Couldn't write to file, close it before running the program")
 
     # Generate data for an xls file using xlwt
-    def write_xlwt_wb(self):
+    def _write_xlwt_wb(self):
         self._xlwt_wb = xlwt.Workbook()
         ws = self._xlwt_wb.add_sheet('Sheet1')
         date_format = xlwt.XFStyle()
@@ -78,8 +87,16 @@ class ETAP_Lump():
                     ws.write(i,j,self._rows[i][j],date_format)
                 else:
                     ws.write(i,j,self._rows[i][j])
+                
+    # Generate data for an xlsx file using openpyxl
+    def _write_openpyxl_wb(self):
+        self._wb = openpyxl.Workbook()
+        ws = self._wb.active
+        for i in range(1, len(self._rows)+1):
+            for j in range(1, 14):
+                ws.cell(row=i,column=j).value = self._rows[i-1][j-1]
 
-# Load lump data from an Excel file, currently only tested for xlsx files
+# Load lump data from an Excel file using openpyxl for xlsx files
 def load_lump(filename):
     _lump = ETAP_Lump()
     _lump._wb = openpyxl.load_workbook(filename)
@@ -103,4 +120,30 @@ def load_lump(filename):
     _lump.set_values(P,Q,PF,Hour,Min,Sec,Date,V,Angle,Humidity,
                      Temp,Wind,Irradiance)
     _lump._calc_step()
+    return(_lump)
+
+# Load lump data from an Excel file using xlrd for xls files
+def load_lump_xlrd(filename):
+    _lump = ETAP_Lump()
+    _lump._xlrd_wb = xlrd.open_workbook(filename)
+    _ws = _lump._xlrd_wb.sheet_by_index(0)
+    P = []; Q = []; PF = []; V = []; Angle = []; Humidity = []; Temp = []
+    Wind = []; Irradiance = []; Hour = []; Min = []; Sec = []; Date = []
+    for row in range(1, _ws.nrows):
+        P.append(         _ws.cell_value(rowx=row, colx=0))
+        Q.append(         _ws.cell_value(rowx=row, colx=1))
+        PF.append(        _ws.cell_value(rowx=row, colx=2))
+        V.append(         _ws.cell_value(rowx=row, colx=3))
+        Angle.append(     _ws.cell_value(rowx=row, colx=4))
+        Humidity.append(  _ws.cell_value(rowx=row, colx=5))
+        Temp.append(      _ws.cell_value(rowx=row, colx=6))
+        Wind.append(      _ws.cell_value(rowx=row, colx=7))
+        Irradiance.append(_ws.cell_value(rowx=row, colx=8))
+        Hour.append(      _ws.cell_value(rowx=row, colx=9))
+        Min.append(       _ws.cell_value(rowx=row, colx=10))
+        Sec.append(       _ws.cell_value(rowx=row, colx=11))
+        Date.append(      _ws.cell_value(rowx=row, colx=12))
+    _lump.set_values(P,Q,PF,Hour,Min,Sec,Date,V,Angle,Humidity,
+                     Temp,Wind,Irradiance)
+    _lump._calc_step(offset=-1)
     return(_lump)
