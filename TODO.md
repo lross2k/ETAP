@@ -1,7 +1,11 @@
 ETAP tool TODO list
 
 Roadmap
--[ ] Write a class ETAP_Lump that generates the base structure
+-[ ] Add functionality to change the timestep of the available data
+-[ ] Setup automatic tests
+
+Done
+-[x] Write a class ETAP_Lump that generates the base structure
     -[x] Generate empty structure 
     -[x] Print structure
     -[x] Add values to empty structure
@@ -9,7 +13,4 @@ Roadmap
     -[x] Generate xls file out of the actual values
     -[x] Generate xlsx file out of the actual values
     -[x] Generate structure out of existing xls file
-    -[ ] Take input time as datetime format
--[ ] Add functionality to change the timestep of the available data
-
-Done
+    -[x] Take input time as datetime format
