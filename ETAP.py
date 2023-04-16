@@ -9,15 +9,15 @@ class ETAP_Lump():
         self._xlwt_wb = None
         self._xlrd_wb = None
         self.date_str = "%Y-%d-%m %H:%M:%S"
-        self._timestep = [0, 15, 0] # HH:MM:SS
+        self._timestep = None # Y-d-m HH:MM:SS
         self._rows = [] # row column syntax
         self._gen_header_row()
     
     # Calculate time step used in the current object
-    def _calc_step(self, offset=0):
-        self._timestep = [self._rows[1][10+offset] - self._rows[2][10+offset],
-                     self._rows[1][11+offset] - self._rows[2][11+offset],
-                     self._rows[1][12+offset] - self._rows[2][12+offset]]
+    def _calc_step(self):
+        self._timestep = [self._rows[2][9] - self._rows[1][9],
+                     self._rows[2][10] - self._rows[1][10],
+                     self._rows[2][11] - self._rows[1][11]]
     
     # Generate the HEADER of Lump file
     def _gen_header_row(self):
@@ -62,6 +62,7 @@ class ETAP_Lump():
                     tmp_row.append('')
             self._rows.append(tmp_row[::])
             tmp_row = []
+        self._calc_step()
     
     # Save the current data in an Excel file, either xlsx or xls
     def save(self, filename, writer='openpyxl'):
@@ -103,7 +104,33 @@ class ETAP_Lump():
         ws = self._wb.active
         for i in range(1, len(self._rows)+1):
             for j in range(1, 14):
-                ws.cell(row=i,column=j).value = self._rows[i-1][j-1]
+                try:
+                    ws.cell(row=i,column=j).value = self._rows[i-1][j-1]
+                except TypeError:
+                    print(self._rows)
+    
+    def change_time_step(self, time_step):
+        if not self._timestep:
+            print("No data has been added yet")
+            return
+        _rows_copy = self._rows[::]
+        self._gen_header_row() 
+        factor = int((self._timestep[0]*60 + self._timestep[1]) / (time_step[0]*60 + time_step[1]))
+        #for i in range(1, len(_rows_copy)):
+        #    for k in range(0,factor):
+        #        for j in range(0, 13):
+        #            self._rows.append(_rows_copy[i][j])
+        tmp_row = []
+        for i in range(1, len(_rows_copy)):
+            for k in range(0,factor):
+                for j in range(0, 13):
+                    if j == 10:
+                        tmp_row.append(time_step[1]*k)
+                    else:
+                        tmp_row.append(_rows_copy[i][j])
+                self._rows.append(tmp_row[::])
+                tmp_row = []
+        self._timestep = time_step
 
 # Load lump data from an Excel file using openpyxl for xlsx files and xlrd for xls files
 def load_lump(filename, reader='openpyxl', date_str=None):
@@ -129,7 +156,6 @@ def load_lump(filename, reader='openpyxl', date_str=None):
             Date.append(      _ws.cell(row=row, column=13).value)
         _lump.set_values(P,Q,PF,Hour,Min,Sec,Date,V,Angle,Humidity,
                          Temp,Wind,Irradiance,date_str=date_str)
-        _lump._calc_step()
     elif reader == 'xlrd':
         _lump._xlrd_wb = xlrd.open_workbook(filename)
         _ws = _lump._xlrd_wb.sheet_by_index(0)
@@ -151,5 +177,4 @@ def load_lump(filename, reader='openpyxl', date_str=None):
             Date.append(      _ws.cell_value(rowx=row, colx=12))
         _lump.set_values(P,Q,PF,Hour,Min,Sec,Date,V,Angle,Humidity,
                          Temp,Wind,Irradiance,date_str=date_str)
-        _lump._calc_step(offset=-1)
     return(_lump)

@@ -2,6 +2,8 @@ ETAP tool TODO list
 
 Roadmap
 -[ ] Add functionality to change the timestep of the available data
+    -[x] Allow to change the time step from a higher to a lower timestep
+    -[ ] Allow to change the time step from a lower to a hieght timestep
 -[ ] Setup automatic tests
 
 Done
