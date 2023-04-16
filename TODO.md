@@ -1,13 +1,6 @@
 ETAP tool TODO list
 
 Roadmap
--[ ] Create some standard abstraction utilities
-    -[x] to 60 min
-    -[x] to 15 min
-    -[x] to 30 min
-    -[x] glob to 60 min
-    -[ ] glob to 30 min
-    -[ ] glob to 15 min
 -[ ] Try to automatically determine date format
 -[ ] Setup automatic tests
 
@@ -24,3 +17,10 @@ Done
 -[x] Add functionality to change the timestep of the available data
     -[x] Allow to change the time step from a higher to a lower timestep
     -[x] Allow to change the time step from a lower to a hieght timestep
+-[x] Create some standard abstraction utilities
+    -[x] to 60 min
+    -[x] to 15 min
+    -[x] to 30 min
+    -[x] glob to 60 min
+    -[x] glob to 30 min
+    -[x] glob to 15 min

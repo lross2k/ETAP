@@ -256,3 +256,9 @@ def _glob_timeshift_generic(func, date_str="%Y-%d-%m %H:%M:%S"):
 
 def glob_timeshift_to_60_minutes(date_str="%Y-%d-%m %H:%M:%S"):
     _glob_timeshift_generic(timeshift_to_60_minutes, date_str=date_str)
+
+def glob_timeshift_to_30_minutes(date_str="%Y-%d-%m %H:%M:%S"):
+    _glob_timeshift_generic(timeshift_to_30_minutes, date_str=date_str)
+
+def glob_timeshift_to_15_minutes(date_str="%Y-%d-%m %H:%M:%S"):
+    _glob_timeshift_generic(timeshift_to_15_minutes, date_str=date_str)

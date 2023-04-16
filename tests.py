@@ -39,3 +39,5 @@ from ETAP import *
 #timeshift_to_30_minutes('WTG6.xls', date_str='%d/%m/%Y')
 
 glob_timeshift_to_60_minutes(date_str='%d/%m/%Y')
+glob_timeshift_to_30_minutes(date_str='%d/%m/%Y')
+glob_timeshift_to_15_minutes(date_str='%d/%m/%Y')
