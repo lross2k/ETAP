@@ -1,10 +1,11 @@
-ETAP tool TODO list
+# ETAP tool TODO list
 
-Roadmap
--[ ] Try to automatically determine date format
+# Roadmap
+## For Version 1.1
 -[ ] Setup automatic tests
 
 Done
+# Version 1.0
 -[x] Write a class ETAP_Lump that generates the base structure
     -[x] Generate empty structure 
     -[x] Print structure
@@ -24,3 +25,4 @@ Done
     -[x] glob to 60 min
     -[x] glob to 30 min
     -[x] glob to 15 min
+-[x] Try to automatically determine date format
