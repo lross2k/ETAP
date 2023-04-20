@@ -44,3 +44,6 @@ from ETAP import *
 
 # Implementing 1 minute time step
 glob_timeshift_to_1_minutes(date_str='%d/%m/%Y')
+glob_timeshift_to_60_minutes(date_str='%d/%m/%Y')
+glob_timeshift_to_30_minutes(date_str='%d/%m/%Y')
+glob_timeshift_to_15_minutes(date_str='%d/%m/%Y')

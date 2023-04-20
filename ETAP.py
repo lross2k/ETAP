@@ -1,4 +1,4 @@
-# Version 1.0.1_DEV of ETAP Python library file
+# Version 1.0.1 of ETAP Python library file
 # Author lross2k
 # Email luisross2000@outlook.com
 

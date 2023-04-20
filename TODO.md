@@ -3,6 +3,11 @@
 # Roadmap
 ## For Version 1.1
 -[ ] Setup automatic tests
+-[ ] Implement a better step changer algorithm, no hard coding
+-[ ] Clean the load_lump function, as it is a hard coded mess
+-[ ] Study if _write_openpyxl is needed, as it has never been used
+-[ ] set_values has 2 nested ifs, optimize this
+-[ ] Optimize the performance using some profiler
 
 Done
 # Version 1.0
