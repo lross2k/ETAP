@@ -1,4 +1,4 @@
-# Version 1.0 of ETAP Python library file
+# Version 1.0.1_DEV of ETAP Python library file
 # Author lross2k
 # Email luisross2000@outlook.com
 
@@ -17,7 +17,7 @@ class Lump():
         self._wb = None
         self._xlwt_wb = None
         self._xlrd_wb = None
-        self.date_str = "%Y-%d-%m %H:%M:%S"
+        self.date_str = "%d/%m/%Y"
         self._timestep = None # Y-d-m HH:MM:SS
         self._rows = [] # row column syntax
         self._gen_header_row()
@@ -101,7 +101,7 @@ class Lump():
         self._xlwt_wb = xlwt.Workbook()
         ws = self._xlwt_wb.add_sheet('Sheet1')
         date_format = xlwt.XFStyle()
-        date_format.num_format_str = 'yyyy-mm-dd hh:mm:ss'
+        date_format.num_format_str = 'dd/mm/yyyy'
         for i in range(0, len(self._rows)):
             for j in range(0, 13):
                 if j == 12:
