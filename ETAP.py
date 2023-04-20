@@ -24,9 +24,9 @@ class Lump():
     
     # Calculate time step used in the current object
     def _calc_step(self):
-        self._timestep = [self._rows[2][9] - self._rows[1][9],
-                     self._rows[2][10] - self._rows[1][10],
-                     self._rows[2][11] - self._rows[1][11]]
+        self._timestep = [self._rows[2][9] -  self._rows[1][9],
+                          self._rows[2][10] - self._rows[1][10],
+                          self._rows[2][11] - self._rows[1][11]]
     
     # Generate the HEADER of Lump file
     def _gen_header_row(self):
@@ -122,6 +122,9 @@ class Lump():
                     print(self._rows)
         self._last_cache_openpyxl = time.localtime()
     
+    # Changes the step used in the Lump file, this doesn't support any value yet,
+    # it must be either 1h, 30min, 15min, or 1min. data values will be preserved
+    # to their corresponding step
     def change_time_step(self, time_step):
         if not self._timestep:
             print("No data has been added yet")
@@ -130,7 +133,22 @@ class Lump():
         self._gen_header_row() 
         factor = (self._timestep[0]*60 + self._timestep[1]) / (time_step[0]*60 + time_step[1])
         tmp_row = []
-        if type(factor) == float and factor < 1.0:
+        if time_step[1] == 1:
+            hour = 0
+            minute = 0
+            for i in range(1, len(_rows_copy)):
+                for k in range(0,int(factor)):
+                    for j in range(0, 13):
+                        if j == 10:
+                            tmp_row.append(minute)
+                            minute += time_step[1] 
+                            hour = hour if minute < 60 else hour + int(minute/60)
+                            minute = minute if minute < 60 else 0
+                        else:
+                            tmp_row.append(_rows_copy[i][j])
+                    self._rows.append(tmp_row[::])
+                    tmp_row = []
+        elif type(factor) == float and factor < 1.0:
             step = int(1/factor)
             for i in range(1, len(_rows_copy), step):
                 for j in range(0, 13):
@@ -252,6 +270,9 @@ def timeshift_to_15_minutes(filename, date_str="%Y-%d-%m %H:%M:%S"):
 def timeshift_to_30_minutes(filename, date_str="%Y-%d-%m %H:%M:%S"):
     _timeshift_generic(filename, minutes=30, folder='30_MIN', date_str=date_str)
 
+def timeshift_to_1_minutes(filename, date_str="%Y-%d-%m %H:%M:%S"):
+    _timeshift_generic(filename, minutes=1, folder='1_MIN', date_str=date_str)
+
 def _glob_timeshift_generic(func, date_str="%Y-%d-%m %H:%M:%S"):
     files = []
     for file in os.listdir():
@@ -268,3 +289,6 @@ def glob_timeshift_to_30_minutes(date_str="%Y-%d-%m %H:%M:%S"):
 
 def glob_timeshift_to_15_minutes(date_str="%Y-%d-%m %H:%M:%S"):
     _glob_timeshift_generic(timeshift_to_15_minutes, date_str=date_str)
+
+def glob_timeshift_to_1_minutes(date_str="%Y-%d-%m %H:%M:%S"):
+    _glob_timeshift_generic(timeshift_to_1_minutes, date_str=date_str)

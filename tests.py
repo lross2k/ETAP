@@ -38,6 +38,9 @@ from ETAP import *
 #timeshift_to_30_minutes('PVA12.xls', date_str='%d/%m/%Y')
 #timeshift_to_30_minutes('WTG6.xls', date_str='%d/%m/%Y')
 
-glob_timeshift_to_60_minutes(date_str='%d/%m/%Y')
-glob_timeshift_to_30_minutes(date_str='%d/%m/%Y')
-glob_timeshift_to_15_minutes(date_str='%d/%m/%Y')
+#glob_timeshift_to_60_minutes(date_str='%d/%m/%Y')
+#glob_timeshift_to_30_minutes(date_str='%d/%m/%Y')
+#glob_timeshift_to_15_minutes(date_str='%d/%m/%Y')
+
+# Implementing 1 minute time step
+glob_timeshift_to_1_minutes(date_str='%d/%m/%Y')
