@@ -1,4 +1,4 @@
-# Version 1.0.1 of ETAP Python library file
+# Version 1.0.2 of ETAP Python library file
 # Author lross2k
 # Email luisross2000@outlook.com
 
@@ -222,7 +222,7 @@ def load_lump(filename, reader='openpyxl', date_str=None):
 ''' Higher level function, allows to change the timestep of a file while also managing
 automatically most of the file format and folder structure dependent parameters '''
 def _timeshift_generic(filename, folder='.', hour=0, minutes=0,
-                       date_str="%Y-%d-%m %H:%M:%S", alt_date_str="%d/%m/%Y"):
+                       date_str="%Y-%d-%m %H:%M:%S", alt_date_strs=["%d/%m/%Y","%m/%d/%Y"]):
     if hour != 0 and minutes != 0:
         print('Unsuported timestep operation, aborting')
         return
@@ -233,14 +233,20 @@ def _timeshift_generic(filename, folder='.', hour=0, minutes=0,
     else:
         print('File:',filename,'should have .xls or .xlsx extension, aborting')
         return
-    try:
-        _lump_ = load_lump(filename, reader=reader, date_str=date_str)
-    except ValueError:
+    reading_attempts = 0
+    read_lump = False
+    alt_date_strs.append(date_str)
+    for alt_date_str_i in alt_date_strs:
+        if read_lump: break
         try:
-            _lump_ = load_lump(filename, reader=reader, date_str=alt_date_str)
+            _lump_ = load_lump(filename, reader=reader, date_str=alt_date_str_i)
+            read_lump = True
+            break
         except ValueError:
-            print('File:',filename,'uses a different date format, specify it with date_str parameter, aborting')
-            return
+            reading_attempts += 1
+    if not read_lump:
+        print(f"error {reading_attempts}")
+        return
     if hour != 0:
         if _lump_._timestep[0] == hour: 
             print('File:',filename,'already had given hour time step, aborting')

@@ -8,6 +8,7 @@
 -[ ] Study if _write_openpyxl is needed, as it has never been used
 -[ ] set_values has 2 nested ifs, optimize this
 -[ ] Optimize the performance using some profiler
+-[ ] Add and test more date formats for the alt_date_strs
 
 Done
 # Version 1.0
